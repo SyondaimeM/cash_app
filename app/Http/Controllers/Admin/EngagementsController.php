@@ -6,6 +6,7 @@ use App\Engagement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
+use App\Bank;
 use App\Http\Requests\Admin\StoreEngagementsRequest;
 use App\Http\Requests\Admin\UpdateEngagementsRequest;
 
@@ -32,7 +33,8 @@ class EngagementsController extends Controller
         }
         // dd('ss');
 
-        return view('admin.engagements.index', compact('engagements'));
+        $banks = Bank::all();
+        return view('admin.engagements.index', compact('engagements', 'banks'));
     }
 
     /**

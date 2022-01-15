@@ -5,7 +5,7 @@
     <section class="sidebar">
         <ul class="sidebar-menu">
 
-             
+
 
             <li class="{{ $request->segment(1) == 'home' ? 'active' : '' }}">
                 <a href="{{ url('/') }}">
@@ -14,60 +14,68 @@
                 </a>
             </li>
 
-            
+
             @can('user_management_access')
-            <li class="treeview">
-                <a href="#">
-                    <i class="fa fa-users"></i>
-                    <span class="title">@lang('global.user-management.title')</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                
-                @can('permission_access')
-                <li class="{{ $request->segment(2) == 'permissions' ? 'active active-sub' : '' }}">
-                        <a href="{{ route('admin.permissions.index') }}">
-                            <i class="fa fa-briefcase"></i>
-                            <span class="title">
-                                @lang('global.permissions.title')
-                            </span>
-                        </a>
-                    </li>
-                @endcan
-                @can('role_access')
-                <li class="{{ $request->segment(2) == 'roles' ? 'active active-sub' : '' }}">
-                        <a href="{{ route('admin.roles.index') }}">
-                            <i class="fa fa-briefcase"></i>
-                            <span class="title">
-                                @lang('global.roles.title')
-                            </span>
-                        </a>
-                    </li>
-                @endcan
-                @can('user_access')
-                <li class="{{ $request->segment(2) == 'users' ? 'active active-sub' : '' }}">
-                        <a href="{{ route('admin.users.index') }}">
-                            <i class="fa fa-user"></i>
-                            <span class="title">
-                                @lang('global.users.title')
-                            </span>
-                        </a>
-                    </li>
-                @endcan
-                </ul>
-            </li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-users"></i>
+                        <span class="title">@lang('global.user-management.title')</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+
+                        @can('permission_access')
+                            <li class="{{ $request->segment(2) == 'permissions' ? 'active active-sub' : '' }}">
+                                <a href="{{ route('admin.permissions.index') }}">
+                                    <i class="fa fa-briefcase"></i>
+                                    <span class="title">
+                                        @lang('global.permissions.title')
+                                    </span>
+                                </a>
+                            </li>
+                        @endcan
+                        @can('role_access')
+                            <li class="{{ $request->segment(2) == 'roles' ? 'active active-sub' : '' }}">
+                                <a href="{{ route('admin.roles.index') }}">
+                                    <i class="fa fa-briefcase"></i>
+                                    <span class="title">
+                                        @lang('global.roles.title')
+                                    </span>
+                                </a>
+                            </li>
+                        @endcan
+                        @can('user_access')
+                            <li class="{{ $request->segment(2) == 'users' ? 'active active-sub' : '' }}">
+                                <a href="{{ route('admin.users.index') }}">
+                                    <i class="fa fa-user"></i>
+                                    <span class="title">
+                                        @lang('global.users.title')
+                                    </span>
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
             @endcan
             @can('engagement_access')
-            <li class="{{ $request->segment(2) == 'engagements' ? 'active' : '' }}">
-                <a href="{{ route('admin.engagements.index') }}">
-                    <i class="fa fa-gears"></i>
-                    <span class="title">@lang('global.engagements.title')</span>
-                </a>
-            </li>
+                <li class="{{ $request->segment(2) == 'banks' ? 'active' : '' }}">
+                    <a href="{{ route('admin.banks.index') }}">
+                        <i class="fa fa-bank"></i>
+                        <span class="title">@lang('global.banks.title')</span>
+                    </a>
+                </li>
             @endcan
-            
+            @can('engagement_access')
+                <li class="{{ $request->segment(2) == 'engagements' ? 'active' : '' }}">
+                    <a href="{{ route('admin.engagements.index') }}">
+                        <i class="fa fa-gears"></i>
+                        <span class="title">@lang('global.engagements.title')</span>
+                    </a>
+                </li>
+            @endcan
+
 
             <li class="treeview">
                 <a href="#">
@@ -78,27 +86,31 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                   <li class="{{ $request->is('/reports/fans') }}">
+                    <li class="{{ $request->is('/reports/fans') }}">
                         <a href="{{ url('/admin/reports/fans') }}">
                             <i class="fa fa-line-chart"></i>
-                            <span class="title">Fans</span>
+                            <span class="title">Top Player Info</span>
                         </a>
-                    </li>   <li class="{{ $request->is('/reports/engagements') }}">
+                    </li>
+                    <li class="{{ $request->is('/reports/engagements') }}">
                         <a href="{{ url('/admin/reports/engagements') }}">
                             <i class="fa fa-line-chart"></i>
-                            <span class="title">Engagements</span>
+                            <span class="title">BitCoin Info</span>
                         </a>
-                    </li>   <li class="{{ $request->is('/reports/reactions') }}">
+                    </li>
+                    <li class="{{ $request->is('/reports/reactions') }}">
                         <a href="{{ url('/admin/reports/reactions') }}">
                             <i class="fa fa-line-chart"></i>
                             <span class="title">Reactions</span>
                         </a>
-                    </li>   <li class="{{ $request->is('/reports/comments') }}">
+                    </li>
+                    <li class="{{ $request->is('/reports/comments') }}">
                         <a href="{{ url('/admin/reports/comments') }}">
                             <i class="fa fa-line-chart"></i>
                             <span class="title">Comments</span>
                         </a>
-                    </li>   <li class="{{ $request->is('/reports/shares') }}">
+                    </li>
+                    <li class="{{ $request->is('/reports/shares') }}">
                         <a href="{{ url('/admin/reports/shares') }}">
                             <i class="fa fa-line-chart"></i>
                             <span class="title">Shares</span>
@@ -107,7 +119,7 @@
                 </ul>
             </li>
 
-            
+
 
 
 
@@ -127,4 +139,3 @@
         </ul>
     </section>
 </aside>
-

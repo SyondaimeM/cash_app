@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Engagement;
+use App\Bank;
+use DateTime;
+use Illuminate\Support\Facades\Input;
 
 class HomeController extends Controller
 {
@@ -23,81 +26,71 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $data = Engagement::get();
+        $query_data = $request->all();
+        if (!empty($query_data)) {
+            $bank_id = $query_data['bank_id'];
+            $from = $query_data['from'];;
+            $to = $query_data['to'];;
+            $data = Engagement::Bank($bank_id)->whereBetween('date', [$from, $to])->get();
+        }
+        $banks = Bank::all();
         $reports = [
             [
-                'reportTitle' => 'Fans',
-                'reportLabel' => 'SUM',
+                'reportTitle' => 'IN',
+                'reportLabel' => 'Cash IN',
+                'colorName' => '#5cb85c',
                 'chartType' => 'line',
-                'results' => Engagement::get()->sortBy('stats_date')->groupBy(function ($entry) {
-                        if ($entry->stats_date instanceof \Carbon\Carbon) {
-                            return \Carbon\Carbon::parse($entry->stats_date)->format('Y-m-d');
-                        }
-
-                        return \Carbon\Carbon::createFromFormat(config('app.date_format'), $entry->stats_date)->format('Y-m-d');
-                    })->map(function ($entries, $group) {
-                        return $entries->sum('fans');
-                    })
-            ],
-            [
-                'reportTitle' => 'Engagements',
-                'reportLabel' => 'SUM',
-                'chartType' => 'line',
-                'results' => Engagement::get()->sortBy('stats_date')->groupBy(function ($entry) {
-                    if ($entry->stats_date instanceof \Carbon\Carbon) {
-                        return \Carbon\Carbon::parse($entry->stats_date)->format('Y-m-d');
-                    }
-
-                    return \Carbon\Carbon::createFromFormat(config('app.date_format'), $entry->stats_date)->format('Y-m-d');
+                'results' => $data->sortBy('date')->groupBy(function ($entry) {
+                    return \Carbon\Carbon::parse($entry->date)->format('Y-m-d');
                 })->map(function ($entries, $group) {
-                    return $entries->sum('engagements');
+                    return $entries->where('status', "PAYMENT DEPOSITED")->sum('net_amount');
                 })
             ],
             [
-                'reportTitle' => 'Reactions',
-                'reportLabel' => 'SUM',
+                'reportTitle' => 'OUT',
+                'reportLabel' => 'Cash OUT',
+                'colorName' => '#d9534f',
                 'chartType' => 'line',
-                'results' => Engagement::get()->sortBy('stats_date')->groupBy(function ($entry) {
-                    if ($entry->stats_date instanceof \Carbon\Carbon) {
-                        return \Carbon\Carbon::parse($entry->stats_date)->format('Y-m-d');
-                    }
+                'results' => $data->sortBy('date')->groupBy(function ($entry) {
 
-                    return \Carbon\Carbon::createFromFormat(config('app.date_format'), $entry->stats_date)->format('Y-m-d');
+                    return \Carbon\Carbon::parse($entry->date)->format('Y-m-d');
                 })->map(function ($entries, $group) {
-                    return $entries->sum('reactions');
+                    return $entries->where('status', "PAYMENT SENT")->sum('net_amount');
                 })
             ],
             [
-                'reportTitle' => 'Comments',
-                'reportLabel' => 'SUM',
+                'reportTitle' => 'REFUNDED',
+                'reportLabel' => 'Cash Refunded',
+                'colorName' => '#f0ad4e',
                 'chartType' => 'line',
-                'results' => Engagement::get()->sortBy('stats_date')->groupBy(function ($entry) {
-                    if ($entry->stats_date instanceof \Carbon\Carbon) {
-                        return \Carbon\Carbon::parse($entry->stats_date)->format('Y-m-d');
-                    }
+                'results' => $data->sortBy('date')->groupBy(function ($entry) {
 
-                    return \Carbon\Carbon::createFromFormat(config('app.date_format'), $entry->stats_date)->format('Y-m-d');
+                    return \Carbon\Carbon::parse($entry->date)->format('Y-m-d');
                 })->map(function ($entries, $group) {
-                    return $entries->sum('comments');
+                    return $entries->where('status', "PAYMENT REFUNDED")->sum('net_amount');
                 })
             ],
             [
-                'reportTitle' => 'Shares',
-                'reportLabel' => 'SUM',
+                'reportTitle' => 'Profit/Loss',
+                'reportLabel' => 'Total Transaction',
+                'colorName' => '#5bc0de',
                 'chartType' => 'line',
-                'results' => Engagement::get()->sortBy('stats_date')->groupBy(function ($entry) {
-                    if ($entry->stats_date instanceof \Carbon\Carbon) {
-                        return \Carbon\Carbon::parse($entry->stats_date)->format('Y-m-d');
-                    }
+                'results' => $data->sortBy('date')->groupBy(function ($entry) {
 
-                    return \Carbon\Carbon::createFromFormat(config('app.date_format'), $entry->stats_date)->format('Y-m-d');
-                })->map(function ($entries, $group) {
-                    return $entries->sum('shares');
+                    return \Carbon\Carbon::parse($entry->date)->format('Y-m-d');
+                })->mapWithKeys(function ($entries, $key) {
+                    $in = $entries->where('status', 'PAYMENT DEPOSITED')->sum('net_amount');
+                    $refunded = $entries->where('status', 'PAYMENT REFUNDED')->sum('net_amount');
+                    $out = $entries->where('status', 'PAYMENT SENT')->sum('net_amount');
+                    $data[$key] = $in + $refunded + $out;
+                    return $data;
                 })
             ],
         ];
 
-        return view('admin.reports', compact('reports'));
+        return view('admin.reports', compact('reports', 'banks', 'query_data'));
     }
 }

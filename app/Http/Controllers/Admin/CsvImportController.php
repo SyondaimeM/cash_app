@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Bank;
 use SpreadsheetReader;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Carbon;
@@ -27,6 +28,8 @@ class CsvImportController extends Controller
         $headers = $reader->current();
         $lines = [];
         $lines[] = $reader->next();
+        $lines[] = $reader->next();
+        $lines[] = $reader->next();
 
 
         $filename = str_random(10) . '.csv';
@@ -38,10 +41,27 @@ class CsvImportController extends Controller
         $model = new $fullModelName();
         $fillables = $model->getFillable();
 
+        // $fillables = $fillables->map(function ($data) {
+        //     dd($data);
+        //     return str_replace(' ', '_', $data);
+        // });
+        $fillables_original = $fillables;
+        foreach ($fillables as $key => $value) {
+            $data[$key] = str_replace('_', ' ', $value);
+            if ($value == 'name_of_sender') {
+                $data[$key] = 'Name of sender/receiver';
+            }
+        }
+
+
+        // dd($data);
+        $fillables = $data;
         $redirect = url()->previous();
 
-        // dd($headers, $filename);
-        return view('csvImport.parse_import', compact('headers', 'filename', 'fillables', 'hasHeader', 'modelName', 'lines', 'redirect'));
+        // dd($fillables, $headers, $filename);
+
+        $banks = Bank::all();
+        return view('csvImport.parse_import', compact('banks', 'headers', 'filename', 'fillables', 'fillables_original', 'hasHeader', 'modelName', 'lines', 'redirect'));
     }
 
     public function process(Request $request)
@@ -74,12 +94,18 @@ class CsvImportController extends Controller
             }
             $insert[] = $tmp;
         }
-
-        $for_insert = array_chunk($insert, 1000);
+        // dd($insert);
+        $for_insert = array_chunk($insert, 100);
         foreach ($for_insert as $insert_item) {
 
             foreach ($insert_item as $key => $item) {
                 $item['date'] = Carbon::parse($item['date'])->tz('CST');
+
+                $item['fee'] = preg_replace('/[^-?0-9.]|\.(?=.*\.)/', '', $item['fee']);
+                $item['amount'] = preg_replace('/[^-?0-9.]|\.(?=.*\.)/', '', $item['amount']);
+                $item['net_amount'] = preg_replace('/[^-?0-9.]|\.(?=.*\.)/', '', $item['net_amount']);
+                $item['asset_price'] = ($item['asset_price'] == "" ? 0 : (preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $item['asset_price'])));
+                $item['asset_amount'] = ($item['asset_amount'] == "" ? 0 : (preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $item['asset_amount'])));
                 $data[$key] = $item;
                 $data[$key]['bank_id'] = $bank_id;
             }

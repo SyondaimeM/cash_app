@@ -3,6 +3,31 @@
 
 @section('content')
     <h3 class="page-title">@lang('global.engagements.title')</h3>
+    <p>
+    <div class="search">
+        <form action="" class="form-inline">
+
+            <div class="form-group">
+                <label for="Bank">Select Bank</label>
+                <select name="bank_id" class="form-control">
+                    <option value=''>All Bank</option>
+                    @foreach ($banks as $k => $bank)
+                        <option value="{{ $bank->id }}" f>
+                            {{ $bank->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="start_date">Start Date</label>
+                <input type="date" class="form-control" id="start_date">
+            </div>
+            <div class="form-group">
+                <label for="start_date">Start Date</label>
+                <input type="date" class="form-control" id="start_date">
+            </div>
+        </form>
+    </div>
+    </p>
     @can('engagement_create')
         <p>
             {{-- <a href="{{ route('admin.engagements.create') }}" class="btn btn-success">@lang('global.app_add_new')</a> --}}

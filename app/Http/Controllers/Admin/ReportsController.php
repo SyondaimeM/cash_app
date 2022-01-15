@@ -5,31 +5,48 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Engagement;
+use DB;
 
 class ReportsController extends Controller
 {
     public function fans()
     {
-        $reports = [
-            [
-                'reportTitle' => 'Fans',
-                'reportLabel' => 'SUM',
-                'chartType'   => 'line',
 
-                'results' => Engagement::get()->sortBy('stats_date')->groupBy(function ($entry) {
-                    if ($entry->stats_date instanceof \Carbon\Carbon) {
-                        return \Carbon\Carbon::parse($entry->stats_date)->format('Y-m-d');
-                    }
+        //Analysis of profit 
+        $data_profit = Engagement::select((DB::raw("SUM( CASE
+                                                        WHEN asset_type = 'BTC' THEN name_of_sender='Bit Coin'
+                                                        WHEN status='TRANSFER REVERSED' THEN net_amount*0
+                                                        WHEN status='PAYMENT FAILED' THEN net_amount*0
+                                                        ELSE net_amount
+                                                    END
+                                                    ) as sumtotal,
+                                                    name_of_sender")))
+            ->orderBy("sumtotal", "DESC")
+            ->groupBy("name_of_sender")
+            ->get()
+            ->take(20);
 
-                    return \Carbon\Carbon::createFromFormat(config('app.date_format'),
-                        $entry->stats_date)->format('Y-m-d');
-                })->map(function ($entries, $group) {
-                    return $entries->sum('fans');
-                }),
-            ],
-        ];
+        //Analysis of Loss 
+        $data_loss = Engagement::select((DB::raw("SUM( CASE
+                                                    WHEN asset_type = 'BTC' THEN name_of_sender='Bit Coin'
+                                                    WHEN status='TRANSFER REVERSED' THEN net_amount*0
+                                                    WHEN status='PAYMENT FAILED' THEN net_amount*0
+                                                    ELSE net_amount
+                                                END
+                                                ) as sumtotal,
+                                                name_of_sender")))
+            ->orderBy("sumtotal", "asc")
+            ->groupBy("name_of_sender")
+            ->get()
+            ->take(20);
 
-        return view('admin.reports', compact('reports'));
+        //Adding Bit Coin to nameless transaction of bit coin
+        $data_loss = $data_loss->map(function ($query) {
+            $query->name_of_sender = ($query->name_of_sender == '') ? 'Bit Coin' : $query->name_of_sender;
+            return $query;
+        });
+
+        return view('admin.record.top', compact('data_profit', 'data_loss'));
     }
 
     public function engagements()
@@ -44,8 +61,10 @@ class ReportsController extends Controller
                         return \Carbon\Carbon::parse($entry->stats_date)->format('Y-m-d');
                     }
 
-                    return \Carbon\Carbon::createFromFormat(config('app.date_format'),
-                        $entry->stats_date)->format('Y-m-d');
+                    return \Carbon\Carbon::createFromFormat(
+                        config('app.date_format'),
+                        $entry->stats_date
+                    )->format('Y-m-d');
                 })->map(function ($entries, $group) {
                     return $entries->sum('engagements');
                 }),
@@ -67,8 +86,10 @@ class ReportsController extends Controller
                         return \Carbon\Carbon::parse($entry->stats_date)->format('Y-m-d');
                     }
 
-                    return \Carbon\Carbon::createFromFormat(config('app.date_format'),
-                        $entry->stats_date)->format('Y-m-d');
+                    return \Carbon\Carbon::createFromFormat(
+                        config('app.date_format'),
+                        $entry->stats_date
+                    )->format('Y-m-d');
                 })->map(function ($entries, $group) {
                     return $entries->sum('reactions');
                 }),
@@ -85,13 +106,15 @@ class ReportsController extends Controller
                 'reportTitle' => 'Comments',
                 'reportLabel' => 'SUM',
                 'chartType'   => 'line',
-                'results'     => Engagement::get()->sortBy('stats_date')->groupBy(function ($entry) {
+                'results'     => Engagement::get()->sortBy('date')->groupBy(function ($entry) {
                     if ($entry->stats_date instanceof \Carbon\Carbon) {
                         return \Carbon\Carbon::parse($entry->stats_date)->format('Y-m-d');
                     }
 
-                    return \Carbon\Carbon::createFromFormat(config('app.date_format'),
-                        $entry->stats_date)->format('Y-m-d');
+                    return \Carbon\Carbon::createFromFormat(
+                        config('app.date_format'),
+                        $entry->stats_date
+                    )->format('Y-m-d');
                 })->map(function ($entries, $group) {
                     return $entries->sum('comments');
                 }),
@@ -113,8 +136,10 @@ class ReportsController extends Controller
                         return \Carbon\Carbon::parse($entry->stats_date)->format('Y-m-d');
                     }
 
-                    return \Carbon\Carbon::createFromFormat(config('app.date_format'),
-                        $entry->stats_date)->format('Y-m-d');
+                    return \Carbon\Carbon::createFromFormat(
+                        config('app.date_format'),
+                        $entry->stats_date
+                    )->format('Y-m-d');
                 })->map(function ($entries, $group) {
                     return $entries->sum('shares');
                 }),
@@ -123,5 +148,4 @@ class ReportsController extends Controller
 
         return view('admin.reports', compact('reports'));
     }
-
 }

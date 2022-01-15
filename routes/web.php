@@ -1,5 +1,7 @@
 <?php
-Route::get('/', function () { return redirect('/admin/home'); });
+Route::get('/', function () {
+    return redirect('/admin/home');
+});
 
 // Authentication Routes...
 $this->get('login', 'Auth\LoginController@showLoginForm')->name('login');
@@ -17,14 +19,17 @@ $this->get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm
 $this->post('password/reset', 'Auth\ResetPasswordController@reset')->name('auth.password.reset');
 
 Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
-    Route::get('/home', 'HomeController@index');
+    // Route::get('/home', 'HomeController@index');
+    Route::match(array('GET', 'POST'), 'home', 'HomeController@index');
     Route::get('/reports/fans', 'Admin\ReportsController@fans');
     Route::get('/reports/engagements', 'Admin\ReportsController@engagements');
     Route::get('/reports/reactions', 'Admin\ReportsController@reactions');
     Route::get('/reports/comments', 'Admin\ReportsController@comments');
     Route::get('/reports/shares', 'Admin\ReportsController@shares');
 
-    
+
+    Route::resource('banks', 'Admin\BanksController');
+    Route::post('banks_mass_destroy', ['uses' => 'Admin\BanksController@massDestroy', 'as' => 'banks.mass_destroy']);
     Route::resource('permissions', 'Admin\PermissionsController');
     Route::post('permissions_mass_destroy', ['uses' => 'Admin\PermissionsController@massDestroy', 'as' => 'permissions.mass_destroy']);
     Route::resource('roles', 'Admin\RolesController');
@@ -39,6 +44,4 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
 
     Route::post('csv_parse', 'Admin\CsvImportController@parse')->name('csv_parse');
     Route::post('csv_process', 'Admin\CsvImportController@process')->name('csv_process');
-
- 
 });
