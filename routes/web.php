@@ -24,6 +24,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
     Route::match(array('GET', 'POST'), 'home', 'HomeController@index');
     Route::match(array('GET', 'POST'), '/reports/top', 'Admin\ReportsController@top');
     Route::match(array('GET', 'POST'), '/reports/bitcoin', 'Admin\ReportsController@bitcoin');
+    Route::match(array('GET', 'POST'), '/reports/outtobank', 'Admin\ReportsController@outtobank');
     // Route::get('/reports/top', 'Admin\ReportsController@top');
     // Route::get('/reports/bitcoin', 'Admin\ReportsController@bitcoin');
     Route::get('/reports/reactions', 'Admin\ReportsController@reactions');

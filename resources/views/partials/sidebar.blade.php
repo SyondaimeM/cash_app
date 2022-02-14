@@ -98,13 +98,13 @@
                             <span class="title">BitCoin Info</span>
                         </a>
                     </li>
-                    {{-- <li class="{{ $request->is('/reports/reactions') }}">
-                        <a href="{{ url('/admin/reports/reactions') }}">
+                    <li class="{{ $request->is('/reports/outtobank') }}">
+                        <a href="{{ url('/admin/reports/outtobank') }}">
                             <i class="fa fa-line-chart"></i>
-                            <span class="title">Reactions</span>
+                            <span class="title">Out to Bank</span>
                         </a>
                     </li>
-                    <li class="{{ $request->is('/reports/comments') }}">
+                    {{-- <li class="{{ $request->is('/reports/comments') }}">
                         <a href="{{ url('/admin/reports/comments') }}">
                             <i class="fa fa-line-chart"></i>
                             <span class="title">Comments</span>
