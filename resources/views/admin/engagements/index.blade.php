@@ -12,13 +12,10 @@
                     <select name="bank_id" class="form-control">
                         <option value=''>All Bank</option>
                         @foreach ($banks as $k => $bank)
-                            <option value="{{ $bank->id }}" @if (empty($query_data) || count($query_data) < 2)
-                                {{-- {{ dd('test') }} --}}
-                            @else
-                                {{ $query_data['bank_id'] == $bank->id ? 'selected' : '' }}
-                        @endif
-                        >
-                        {{ $bank->name }}</option>
+                            <option value="{{ $bank->id }}"
+                                @if (empty($query_data) || count($query_data) < 2) @else
+                                {{ $query_data['bank_id'] == $bank->id ? 'selected' : '' }} @endif>
+                                {{ $bank->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -48,23 +45,12 @@
     <hr>
     @can('engagement_create')
         <p>
-            {{-- <a href="{{ route('admin.engagements.create') }}" class="btn btn-success">@lang('global.app_add_new')</a> --}}
             <a href="#" class="btn btn-warning" style="margin-left:5px;" data-toggle="modal"
                 data-target="#myModal">@lang('global.app_csvImport')</a>
             @include('csvImport.modal', ['model' => 'Engagement'])
 
         </p>
     @endcan
-
-    {{-- <p>
-    <ul class="list-inline">
-        <li><a href="{{ route('admin.engagements.index') }}"
-                style="{{ request('show_deleted') == 1 ? '' : 'font-weight: 700' }}">@lang('global.app_all')</a></li> |
-        <li><a href="{{ route('admin.engagements.index') }}?show_deleted=1"
-                style="{{ request('show_deleted') == 1 ? 'font-weight: 700' : '' }}">@lang('global.app_trash')</a></li>
-    </ul>
-    </p> --}}
-
 
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -90,10 +76,14 @@
                         @foreach ($engagements as $engagement)
                             <tr data-entry-id="{{ $engagement->id }}">
                                 @can('engagement_delete')
-                                    @if (request('show_deleted') != 1)<td></td>@endif
+                                    @if (request('show_deleted') != 1)
+                                        <td></td>
+                                    @endif
                                 @endcan
 
-                                <td field-key='reactions'>{{ $engagement->name_of_sender }}</td>
+                                <td field-key='reactions'> <a href="#" class="clickable"
+                                        data-target="{{ $engagement->name_of_sender }}">
+                                        {{ $engagement->name_of_sender }}</a></td>
                                 <td field-key='transaction_id'>{{ $engagement->transaction_id }}</td>
                                 <td field-key='stats_date'>{{ $engagement->date }}</td>
                                 <td field-key='fans'>${{ $engagement->net_amount }}</td>
@@ -117,12 +107,11 @@
 @section('javascript')
     <script>
         @can('engagement_delete')
-            @if (request('show_deleted') != 1) window.route_mass_crud_entries_destroy = '{{ route('admin.engagements.mass_destroy') }}'; @endif
+            @if (request('show_deleted') != 1)
+                window.route_mass_crud_entries_destroy = '{{ route('admin.engagements.mass_destroy') }}';
+            @endif
         @endcan
     </script>
-
-    {{-- @section('javascript')
-@parent --}}
 
     <script>
         function daysfunction(x) {
@@ -158,6 +147,5 @@
             });
         });
     </script>
-    {{-- @stop --}}
 
 @endsection

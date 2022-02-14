@@ -48,6 +48,13 @@ class EngagementsController extends Controller
         return view('admin.engagements.index', compact('engagements', 'banks', 'query_data'));
     }
 
+    //last 5 transaction of customer
+    public function fetchTransaction(Request $request)
+    {
+        $name = $request->all()['name_of_sender'];
+        $data = Engagement::where('name_of_sender', $name)->orderBy('date', 'DESC')->get();
+        return ['result' => $data, 'message' => 'success'];
+    }
     /**
      * Show the form for creating new Engagement.
      *

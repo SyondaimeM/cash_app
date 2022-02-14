@@ -1,11 +1,11 @@
 <script>
-    window.deleteButtonTrans = '{{ trans("global.app_delete_selected") }}';
-    window.copyButtonTrans = '{{ trans("global.app_copy") }}';
-    window.csvButtonTrans = '{{ trans("global.app_csv") }}';
-    window.excelButtonTrans = '{{ trans("global.app_excel") }}';
-    window.pdfButtonTrans = '{{ trans("global.app_pdf") }}';
-    window.printButtonTrans = '{{ trans("global.app_print") }}';
-    window.colvisButtonTrans = '{{ trans("global.app_colvis") }}';
+    window.deleteButtonTrans = '{{ trans('global.app_delete_selected') }}';
+    window.copyButtonTrans = '{{ trans('global.app_copy') }}';
+    window.csvButtonTrans = '{{ trans('global.app_csv') }}';
+    window.excelButtonTrans = '{{ trans('global.app_excel') }}';
+    window.pdfButtonTrans = '{{ trans('global.app_pdf') }}';
+    window.printButtonTrans = '{{ trans('global.app_print') }}';
+    window.colvisButtonTrans = '{{ trans('global.app_colvis') }}';
 </script>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
@@ -35,13 +35,42 @@
             "url": "http://cdn.datatables.net/plug-ins/1.10.16/i18n/English.json"
         }
     });
-
-     
-
 </script>
 
- 
 
 
 
+<script>
+    $('.clickable').on('click', function(e) {
+        name = $(this).data('target');
+        $.ajax({
+            headers: {
+                'X-CSRF-Token': '{{ csrf_token() }}',
+            },
+            url: "/admin/fetchTransaction",
+            type: "JSON",
+            method: "post",
+            data: {
+                'name_of_sender': $(this).data("target")
+            },
+            success: function(data) {
+                // console.log(data);
+                var table = '';
+                data.result.forEach(element => {
+                    table += '<tr>';
+                    table += '<td>' + element.date + '</td>';
+                    table += '<td>$' + element.net_amount + '</td>';
+                    table += '<td>' + element.status + '</td>';
+                    table += '</tr>';
+                });
+                $('#transactionModalBoday').html(table);
+                $('#nameModal').html(name);
+                $('#transaction').modal('toggle');
+            },
+            error: function(data) {
+                console.log("error: " + JSON.stringify(data));
+            },
+        });
+    });
+</script>
 @yield('javascript')

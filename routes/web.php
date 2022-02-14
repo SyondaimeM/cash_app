@@ -46,6 +46,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
     Route::post('engagements_restore/{id}', ['uses' => 'Admin\EngagementsController@restore', 'as' => 'engagements.restore']);
     Route::delete('engagements_perma_del/{id}', ['uses' => 'Admin\EngagementsController@perma_del', 'as' => 'engagements.perma_del']);
 
+    Route::post('fetchTransaction', 'Admin\EngagementsController@fetchTransaction')->name('fetchTransaction');
 
     Route::post('csv_parse', 'Admin\CsvImportController@parse')->name('csv_parse');
     Route::post('csv_process', 'Admin\CsvImportController@process')->name('csv_process');

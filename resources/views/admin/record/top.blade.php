@@ -9,13 +9,11 @@
                     <select name="bank_id" class="form-control">
                         <option value=''>All Bank</option>
                         @foreach ($banks as $k => $bank)
-                            <option value="{{ $bank->id }}" @if (empty($query_data) || count($query_data) < 2)
-                                {{-- {{ dd('test') }} --}}
+                            <option value="{{ $bank->id }}"
+                                @if (empty($query_data) || count($query_data) < 2) {{-- {{ dd('test') }} --}}
                             @else
-                                {{ $query_data['bank_id'] == $bank->id ? 'selected' : '' }}
-                        @endif
-                        >
-                        {{ $bank->name }}</option>
+                                {{ $query_data['bank_id'] == $bank->id ? 'selected' : '' }} @endif>
+                                {{ $bank->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -34,13 +32,11 @@
                     <label for="Bank">Select Quantity</label>
                     <select name="quantity" class="form-control">
                         @foreach ($numbers as $k => $number)
-                            <option value="{{ $number }}" @if (empty($query_data) || count($query_data) < 2)
-                                {{-- {{ dd('test') }} --}}
+                            <option value="{{ $number }}"
+                                @if (empty($query_data) || count($query_data) < 2) {{-- {{ dd('test') }} --}}
                             @else
-                                {{ $query_data['quantity'] == $number ? 'selected' : '' }}
-                        @endif
-                        >
-                        {{ $number }}</option>
+                                {{ $query_data['quantity'] == $number ? 'selected' : '' }} @endif>
+                                {{ $number }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -76,7 +72,8 @@
                     @foreach ($data_profit as $key => $row)
                         <tr>
                             <td>{{ ++$key }}</td>
-                            <td>{{ $row->name_of_sender }}</td>
+                            <td> <a href="#" class="clickable" data-target="{{ $row->name_of_sender }}">
+                                    {{ $row->name_of_sender }}</a></td>
                             <td>${{ $row->sumtotal }}</td>
                         </tr>
                     @endforeach
@@ -102,7 +99,8 @@
                     @foreach ($data_loss as $key => $row)
                         <tr>
                             <td>{{ ++$key }}</td>
-                            <td>{{ $row->name_of_sender }}</td>
+                            <td> <a href="#" class="clickable" data-target="{{ $row->name_of_sender }}">
+                                    {{ $row->name_of_sender }}</a></td>
                             <td>${{ $row->sumtotal }}</td>
                         </tr>
                     @endforeach
