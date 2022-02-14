@@ -20,12 +20,12 @@ class Create1525174494EngagementsTable extends Migration
                 $table->timestampTz('date')->nullable();
                 $table->string('transaction_type')->nullable();
                 $table->string('currency')->nullable();
-                $table->string('amount')->nullable();
-                $table->string('fee')->nullable();
-                $table->string('net_amount')->nullable();
+                $table->float('fee')->nullable();
+                $table->float('amount')->nullable();
+                $table->float('net_amount')->nullable();
                 $table->string('asset_type')->nullable();
-                $table->string('asset_price')->nullable();
-                $table->string('asset_amount')->nullable();
+                $table->double('asset_price', 15, 9)->nullable();
+                $table->double('asset_amount', 15, 9)->nullable();
                 $table->string('status')->nullable();
                 $table->longText('notes')->nullable();
                 $table->string('name_of_sender')->nullable();

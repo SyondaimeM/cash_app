@@ -16,9 +16,22 @@
                         <input type="hidden" name="hasHeader" value="{{ $hasHeader }}" />
                         <input type="hidden" name="modelName" value="{{ $modelName }}" />
                         <input type="hidden" name="redirect" value="{{ $redirect }}" />
-                        <input type="hidden" name="bank_id" value="1" />
+                        {{-- <input type="hidden" name="bank_id" value="1" /> --}}
 
                         <table class="table">
+                            <tr>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label for="Bank">Select Bank</label>
+                                        <select name="bank_id" class="form-control" required>
+                                            @foreach ($banks as $k => $bank)
+                                                <option value="{{ $bank->id }}" f>
+                                                    {{ $bank->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </tr>
                             @if (isset($headers))
                                 <tr>
                                     @foreach ($headers as $field)
@@ -41,8 +54,8 @@
                                         <select name="fields[{{ $key }}]">
                                             <option value=''>Please select</option>
                                             @foreach ($fillables as $k => $fillable)
-                                                <option value="{{ $fillable }}" @if (strtolower($header) === strtolower($fillable)) selected @endif>
-                                                    {{ $fillable }}</option>
+                                                <option value="{{ $fillables_original[$k] }}" @if (strtolower($header) === strtolower($fillable)) selected @endif>
+                                                    {{ $fillables[$k] }}</option>
                                             @endforeach
                                         </select>
                                     </td>

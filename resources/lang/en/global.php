@@ -22,6 +22,14 @@ return [
 		],
 	],
 
+	'banks' => [
+		'title' => 'Banks',
+		'fields' => [
+			'name' => 'Name',
+			'status' => 'Status',
+		],
+	],
+
 	'users' => [
 		'title' => 'Users',
 		'fields' => [

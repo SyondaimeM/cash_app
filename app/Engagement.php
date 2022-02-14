@@ -26,6 +26,7 @@ class Engagement extends Model
         'asset_amount', 'status', 'notes', 'name_of_sender', 'account'
     ];
     protected $hidden = [];
+    protected $dateFormat = 'Y-m-d H:i:sP';
 
 
 
@@ -36,12 +37,16 @@ class Engagement extends Model
     public function setStatsDateAttribute($input)
     {
         if ($input != null && $input != '') {
-            $this->attributes['stats_date'] = Carbon::createFromFormat(config('app.date_format'), $input)->format('Y-m-d');
+            $this->attributes['date'] = Carbon::createFromFormat(config('app.date_format'), $input)->format('Y-m-d');
         } else {
-            $this->attributes['stats_date'] = null;
+            $this->attributes['date'] = null;
         }
     }
 
+    public function  scopeBank($query, $bank_id)
+    {
+        return $query->where('bank_id', $bank_id);
+    }
     /**
      * Get attribute from date format
      * @param $input
