@@ -26,7 +26,7 @@
                         value="{{ empty($query_data) ? Carbon\Carbon::now()->format('mm-dd-YYYY') : $query_data['to'] }}">
                 </div>
                 <div class="form-group">
-                    <button type="submit">Submit</button>
+                    <button type="submit">Search</button>
                 </div>
             </form>
         </div>

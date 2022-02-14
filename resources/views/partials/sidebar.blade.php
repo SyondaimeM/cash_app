@@ -86,19 +86,19 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li class="{{ $request->is('/reports/fans') }}">
-                        <a href="{{ url('/admin/reports/fans') }}">
+                    <li class="{{ $request->is('/reports/top') }}">
+                        <a href="{{ url('/admin/reports/top') }}">
                             <i class="fa fa-line-chart"></i>
                             <span class="title">Top Player Info</span>
                         </a>
                     </li>
-                    <li class="{{ $request->is('/reports/engagements') }}">
-                        <a href="{{ url('/admin/reports/engagements') }}">
+                    <li class="{{ $request->is('/reports/bitcoin') }}">
+                        <a href="{{ url('/admin/reports/bitcoin') }}">
                             <i class="fa fa-line-chart"></i>
                             <span class="title">BitCoin Info</span>
                         </a>
                     </li>
-                    <li class="{{ $request->is('/reports/reactions') }}">
+                    {{-- <li class="{{ $request->is('/reports/reactions') }}">
                         <a href="{{ url('/admin/reports/reactions') }}">
                             <i class="fa fa-line-chart"></i>
                             <span class="title">Reactions</span>
@@ -115,7 +115,7 @@
                             <i class="fa fa-line-chart"></i>
                             <span class="title">Shares</span>
                         </a>
-                    </li>
+                    </li> --}}
                 </ul>
             </li>
 

@@ -32,9 +32,13 @@ class HomeController extends Controller
         $query_data = $request->all();
         if (!empty($query_data)) {
             $bank_id = $query_data['bank_id'];
-            $from = $query_data['from'];;
-            $to = $query_data['to'];;
-            $data = Engagement::Bank($bank_id)->whereBetween('date', [$from, $to])->get();
+            $from = $query_data['from'];
+            $to = $query_data['to'];
+            if ($bank_id == '') {
+                $data = Engagement::whereBetween('date', [$from, $to])->get();
+            } else {
+                $data = Engagement::Bank($bank_id)->whereBetween('date', [$from, $to])->get();
+            }
         }
         $banks = Bank::all();
         $reports = [

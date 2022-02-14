@@ -17,24 +17,35 @@ class EngagementsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         if (!Gate::allows('engagement_access')) {
             return abort(401);
         }
-
-        if (request('show_deleted') == 1) {
-            if (!Gate::allows('engagement_delete')) {
-                return abort(401);
+        $query_data = $request->all();
+        if (!empty($query_data) && count($query_data) > 1) {
+            $bank_id = $query_data['bank_id'];
+            $from = $query_data['from'];
+            $to = $query_data['to'];
+            if ($bank_id == '') {
+                $engagements = Engagement::whereBetween('date', [$from, $to])->paginate(30);
+            } else {
+                $engagements = Engagement::Bank($bank_id)->whereBetween('date', [$from, $to])->paginate(30);
+                // dd('tt');
             }
-            $engagements = Engagement::onlyTrashed()->take(20)->get();
         } else {
-            $engagements = Engagement::all()->take(20);
+            if (request('show_deleted') == 1) {
+                if (!Gate::allows('engagement_delete')) {
+                    return abort(401);
+                }
+                $engagements = Engagement::onlyTrashed()->paginate(30);
+            } else {
+                $engagements = Engagement::paginate(30);
+            }
         }
-        // dd('ss');
 
         $banks = Bank::all();
-        return view('admin.engagements.index', compact('engagements', 'banks'));
+        return view('admin.engagements.index', compact('engagements', 'banks', 'query_data'));
     }
 
     /**
